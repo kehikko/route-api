@@ -1,0 +1,192 @@
+<h1>
+  API Test Tool
+</h1>
+<i>
+  Using controller {{ controller }}
+</i>
+<div class="panel panel-default">
+  <div class="panel-body">
+<!--
+    <div class="row">
+      <div class="col-sm-6 row">
+        <div class="col-sm-12">
+          <label>
+            %random%:
+          </label>
+          <input type="text" class="form-control input-sm" value="" id="api-test-call-var-random" />
+        </div>
+        <div class="col-sm-12">
+          <label>
+            %auto_increment%:
+          </label>
+          <input type="text" class="form-control input-sm" value="" id="api-test-call-var-auto-increment" />
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <p class="bg-info description-badge">
+          Use these to include automatically changing values into requests. You can include either %..%
+          into any input field (slugs and put/post fields). They both are automatically updated after every request (get/post/put).
+          <br />
+          <i>%random%</i> can be used to include random string into any input field.
+          <br />
+          <i>%auto_increment%</i> can be used to include incrementing number into any input field.
+        </p>
+      </div>
+    </div>
+    <hr />
+-->
+    <div class="form-group">
+      <label>
+        Select API call:
+      </label>
+      <select id="api-test-call-select" class="form-control">
+        {% for call in calls %}
+        <option value="{{ call.name }}">
+          {{ call.name }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+    {% for call in calls %}
+      <script>
+        var api_test_call_js_slugs_{{ call.name }} = {{ call.jsSlugs|json_encode(constant('JSON_PRETTY_PRINT'))|raw }};
+      </script>
+      <div id="{{ call.name }}" class="form-group api-test-call-form" {% if not loop.first %}style="display: none;"{% endif %}>
+        <div class="row">
+          <div class="col-sm-6 row">
+            <div class="col-sm-12">
+              <h4>
+                URI Pattern
+              </h4>
+              <input class="form-control input-sm" readonly value="{{ call.pattern }}" />
+              <br />
+            </div>
+            <div class="col-sm-12">
+              <h4>
+                URI Slugs
+              </h4>
+              {% if call.slugs %}
+                <ul class="list-plain small">
+                  {% for slug in call.slugs %}
+                    <li>
+                      <label>
+                        <span style="color: #070">{{ slug.slug }}</span>
+                        {% if not slug.optional %}
+                          (<span style="color: #a0a">{{ slug.types|join('/') }}</span>, <i style="color: #a00">required</i>)
+                        {% else %}
+                          (<span style="color: #a0a">{{ slug.types|join('/') }}</span>, <i style="color: #0aa">optional</i>)
+                        {% endif %}
+                      </label>
+                      {% if call.selectors[slug.slug] %}
+                          <select name="{{ slug.slug }}" id="api-test-call-slug-{{ call.name }}--{{ slug.slug }}" {% if call.selectors[slug.slug].child %}child="{{ call.selectors[slug.slug].child }}"{% endif %} class="form-control input-sm api-test-call-selector">
+                            <option value="" parent="">
+                            </option>
+                            {% for selector in call.selectors[slug.slug].values %}
+                              <option value="{{ selector.value }}" {% if selector.parent %}parent="{{ selector.parent }}"{% endif %}>
+                                {{ selector.name }}
+                              </option>
+                            {% endfor %}
+                          </select>
+                      {% else %}
+                        <input id="api-test-call-slug-{{ call.name }}--{{ slug.slug }}" class="form-control input-sm" value="{{ slug.default }}" placeholder="{{ slug.slug }}" />
+                      {% endif %}
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+            <div class="col-sm-12">
+              <h4>
+                PUT/POST
+              </h4>
+              {% if call.put %}
+                <ul class="list-plain small">
+                  {% for key, value in call.put %}
+                    <li style="padding-top: 7px">
+                      <label>
+                        <span style="color: #070">{{ key }}</span>
+                        (
+                        <span style="color: #a0a">{{ value.type }}</span>, 
+                        {% if value.required.create is defined and value.required.create is same as(null) %}
+                          create: <i style="color: #990">invalid</i>
+                        {% elseif value.required.create is same as(true) or value.required is same as(true) %}
+                          create: <i style="color: #a00">required</i>
+                        {% else %}
+                          create: <i style="color: #0aa">optional</i>
+                        {% endif %}
+                        ,
+                        {% if value.required.exists is defined and value.required.exists is same as(null) %}
+                          exists: <i style="color: #990">invalid</i>
+                        {% elseif value.required.exists is same as(true) or value.required is same as(true) %}
+                          exists: <i style="color: #a00">required</i>
+                        {% else %}
+                          exists: <i style="color: #0aa">optional</i>
+                        {% endif %}
+                        )
+                      </label>
+                      {% if call.selectors[key] %}
+                        {% if value.type == 'array' %}
+                          <div name="{{ key }}" class="form-group api-test-call-selector api-test-call-put-checkbox-{{ call.name }}">
+                            {% for selector in call.selectors[key].values %}
+                              <label class="btn btn-primary btn-sm">
+                                <input type="checkbox" autocomplete="off" value="{{ selector.value }}" />
+                                {{ selector.name }}
+                              </label>
+                            {% endfor %}
+                          </div>
+                        {% else %}
+                          <select name="{{ key }}" {% if call.selectors[key].child %}child="{{ call.selectors[key].child }}"{% endif %} class="form-control input-sm api-test-call-selector api-test-call-put-value-{{ call.name }}">
+                            <option value="" parent="">
+                            </option>
+                          {% for selector in call.selectors[key].values %}
+                            <option value="{{ selector.value }}" {% if selector.parent %}parent="{{ selector.parent }}"{% endif %}>
+                              {{ selector.name }}
+                            </option>
+                          {% endfor %}
+                          </select>
+                        {% endif %}
+                      {% elseif value.type == 'bool' %}
+                        <select name="{{ key }}" class="form-control input-sm api-test-call-put-value-{{ call.name }}">
+                          <option value="">
+                          </option>
+                          <option value="false">
+                            false
+                          </option>
+                          <option value="true">
+                            true
+                          </option>
+                        </select>
+                      {% else %}
+                        <input name="{{ key }}" class="form-control input-sm api-test-call-put-value-{{ call.name }}" value="" placeholder="{{ key }}" />
+                      {% endif %}
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+          </div>
+          <div class="col-sm-6 row">
+            <div class="col-sm-12">
+              <h4>
+                Requests
+              </h4>
+              <button type="button" class="btn btn-info api-test-call-action api-test-call-action-get">GET</button>
+              <button type="button" class="btn btn-primary api-test-call-action api-test-call-action-put">PUT</button>
+              <button type="button" class="btn btn-danger api-test-call-action api-test-call-action-delete">DELETE</button>
+            </div>
+            <div class="col-sm-12">
+              <h4>
+                Response
+                <span class="fa fa-cog fa-spin api-test-call-action-loading" style="display: none;"></span>
+                <span class="small api-test-call-action-time-container" style="display: none;">
+                  (<span class="api-test-call-action-time"></span>)
+                </span>
+              </h4>
+              <pre id="api-test-call-response-{{ call.name }}" class="small" style="white-space: pre-wrap;">Request response will appear here.</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>

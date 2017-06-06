@@ -1,0 +1,17 @@
+
+example:
+  pattern: '/example'
+  controller: ApiExample
+  action: test
+
+example_class:
+  pattern: '/example/class/{id?}'
+  controller: ApiExample
+  action: class
+  format: json
+
+example_array:
+  pattern: '/example/array/{id?}'
+  controller: ApiExample
+  action: array
+  format: json

@@ -1,0 +1,7 @@
+test:
+  controller: API
+  action: test
+
+test-tool:
+  controller: API
+  action: testTool

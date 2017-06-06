@@ -1,0 +1,94 @@
+class:
+  route: example_class
+  put:
+    values:
+      name:
+        type: string
+        method: setName
+        required:
+          create: true
+          exists: null
+      type:
+        type: int
+        method: setType
+        required:
+          create: true
+          exists: false
+      size:
+        width:
+          type: int
+          method: setWidth
+          required:
+            create: true
+            exists: false
+        height:
+          type: int
+          method: setHeight
+          required:
+            create: true
+            exists: false
+      secret:
+        type: string
+        method: setSecret
+        required: false
+  get:
+    values:
+      id:
+        property: id
+      name:
+        method: getName
+      type:
+        method: getType
+      size:
+        width:
+          method: getWidth
+        height:
+          method: getHeight
+
+array:
+  route: example_array
+  put:
+    values:
+      name:
+        type: string
+        key: name
+        required:
+          create: true
+          exists: null
+      type:
+        type: int
+        key: type
+        required:
+          create: true
+          exists: false
+      size:
+        width:
+          type: int
+          key: width
+          required:
+            create: true
+            exists: false
+        height:
+          type: int
+          key: height
+          required:
+            create: true
+            exists: false
+      secret:
+        type: string
+        key: secret
+        required: false
+  get:
+    values:
+      id:
+        key: id
+      name:
+        key: name
+      type:
+        key: type
+      size:
+        width:
+          key: width
+        height:
+          key: height
+      # secret is secret
