@@ -1,7 +1,7 @@
 {
 	"name": "kehikko/route/api",
 	"type": "kehikko/route",
-	"description": "Kehikko framework basic user account and authentication UI",
+	"description": "API UI for kehikko framework",
 	"license": "MIT",
 	"authors": [
 	{
