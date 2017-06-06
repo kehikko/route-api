@@ -1,5 +1,5 @@
 {
-	"name": "kehikko/route/api",
+	"name": "kehikko/route-api",
 	"type": "kehikko/route",
 	"description": "API UI for kehikko framework",
 	"license": "MIT",
