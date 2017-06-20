@@ -92,6 +92,9 @@ function apiTestCall(method, content) {
 	var call = $('#api-test-call-select').val();
 	var slugs = window['api_test_call_js_slugs_' + call];
 	var url = $('#api-test-call-base-url').val();
+    if (url === '/') {
+        url = '';
+    }
 	var auto = $('#api-test-call-var-auto-increment').val();
 	var random = $('#api-test-call-var-random').val();
 	for (var i = 0; i < slugs.length; i++) {
