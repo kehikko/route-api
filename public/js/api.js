@@ -71,6 +71,9 @@ $(document).ready(function() {
 	$('.api-test-call-action-delete').click(function() {
 		apiTestCall('DELETE');
 	});
+	$('.api-test-call-action-options').click(function() {
+		apiTestCall('OPTIONS');
+	});
 	apiTestGenerateVariables();
 	$('.api-test-call-selector').change();
 	if (window.location.hash)
